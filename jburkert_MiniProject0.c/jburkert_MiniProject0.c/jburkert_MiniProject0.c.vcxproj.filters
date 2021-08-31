@@ -23,5 +23,8 @@
     <ClCompile Include="binaryutils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="jburkert_MiniProject0.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -24,6 +24,7 @@
     <ProjectGuid>{f1263977-ece4-4b10-a7ac-7fcca1b8b2ea}</ProjectGuid>
     <RootNamespace>jburkertMiniProject0c</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>jburkert_MiniProject0</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="binaryutils.c" />
+    <ClCompile Include="jburkert_MiniProject0.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

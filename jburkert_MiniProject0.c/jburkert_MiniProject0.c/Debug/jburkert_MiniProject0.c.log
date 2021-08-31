@@ -1,0 +1,10 @@
+﻿  binaryutils.c
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(7,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(11,25): warning C4047: '=': 'uint32_t *' differs in levels of indirection from 'uint32_t'
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(12,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'uint32_t *'
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(24,25): warning C4047: '=': 'uint32_t *' differs in levels of indirection from 'uint32_t'
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(25,9): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'uint32_t *'
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(33,24): warning C4047: '=': 'uint32_t *' differs in levels of indirection from 'uint32_t'
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.c(42,24): warning C4047: '=': 'uint32_t *' differs in levels of indirection from 'uint32_t'
+  jburkert_MiniProject0.c.vcxproj -> C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\Debug\jburkert_MiniProject0.exe
