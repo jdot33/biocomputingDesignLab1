@@ -1,7 +1,7 @@
 /*
 Joel Burkert
 8/31/2021
-Mini project 0
+This project explains how bitwise operators set and clear bits and how they can be used to do simple math.
 */
 #pragma once
 #include <stdio.h>;

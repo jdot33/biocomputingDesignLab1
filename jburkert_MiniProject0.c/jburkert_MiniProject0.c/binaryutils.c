@@ -31,7 +31,7 @@ void setbits(uint32_t* addr, uint32_t bitmask)
 	printf("addr = %d\n", *addr);
 
 	addr = *addr | bitmask;
-	printf("setbits addr = %p\n", addr);
+	printf("setbits addr = %d\n", addr);
 }
 
 void clearbits(uint32_t* addr, uint32_t bitmask)
@@ -40,10 +40,19 @@ void clearbits(uint32_t* addr, uint32_t bitmask)
 	printf("addr = %d\n", *addr);
 	bitmask = ~bitmask;
 	addr = *addr & bitmask;
-	printf("clearbits addr = %p\n", addr);
+	printf("clearbits addr = %d\n", addr);
+	
 }
 
 void display_binary(uint32_t num)
 {
-
+	uint32_t num1 = num;
+	int size = sizeof(num);
+	printf("%d\n", num1);
+	printf("Size: %d\n", size);
+	for (int i=0; i < 32; i++) {
+		// print last bit and shift left.
+		printf("%u ", num);
+		num = num << 1;
+	}
 }

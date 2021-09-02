@@ -8,5 +8,7 @@ void main()
 	//clearbit(&solo, 0);
 	//setbits(&solo, 3584);
 	clearbits(&solo, 8);
+	printf("Solo: %d\n", solo);
+	printf("Binary Solo:\n\r");
 	display_binary(solo);
 }
