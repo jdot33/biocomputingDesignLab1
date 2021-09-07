@@ -1,5 +1,9 @@
-﻿  jburkert_MiniProject0.c
+﻿  binaryutils.c
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(7,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  jburkert_MiniProject0.c
 C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\jburkert_MiniProject0.c(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(7,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\jburkert_MiniProject0.c\binaryutils.h(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating Code...
   jburkert_MiniProject0.c.vcxproj -> C:\Users\jdbur\Documents\GitHub\biocomputingDesignLab1\jburkert_MiniProject0.c\Debug\jburkert_MiniProject0.exe
