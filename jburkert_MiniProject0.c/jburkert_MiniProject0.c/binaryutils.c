@@ -28,7 +28,7 @@ void clearbits(uint32_t* addr, uint32_t bitmask)
 
 void display_binary(uint32_t num)
 {
-	uint32_t num1 = num;
+	//uint32_t num1 = num;
 	int temp = 0;
 	char binary[128]; //each char takes up 4 bits of memory so 32*4=128
 	for (unsigned i= (1 << 31); i > 0; i = i/2) { //dividing i by 2 is the same as shifting i to the right 1 bit. therefor every iteration is just comparing a 1 to a index of num and if they are both one then 1 gets added to array "binary"
