@@ -9,71 +9,92 @@
 #define OUTSET (uint32_t*)0x50000508
 #define OUTCLR (uint32_t*)0x5000050C
 
+uint32_t counter = 0;
+
 typedef struct {
     uint32_t mills;
+    uint32_t period;
+    float CDC;
     uint32_t count = 0;   /* A counter value               */
 } message_t;
 
-Queue<message_t, 9> queue;
 MemoryPool<message_t, 9> mpool;
-Ticker flipper;
+Queue<message_t, 9> queue;
 
-Thread thread1;
-Thread thread2;
+Ticker Flipper;
+Mutex stdio_mutex;
 
-USBSerial serial;
+PwmOut blue(LED4);
 
-void off(){
-    setbit(OUTCLR, 16);
+Thread thread1, thread2, thread3;
+
+//USBSerial serial;
+
+void flip(){
+    if(counter <= 333){
+        setbit(OUTCLR, 16);
+    }
+    else{
+        setbit(OUTSET, 16);
+    }
+
+    if(counter == 1000){
+        counter = -1;
+    }
+    counter++;
 }
+
 
 void Vanilla()
 {
-    flipper.attach(&off, 0.0003); // the address of the function to be attached (flip) and the interval (2 seconds)
-    while(true)
-    {
-        serial.printf("Vanilla loop entered...\r\n");
-        osEvent evt = queue.get();
-        if(evt.status == osEventMessage){
-            serial.printf("status is message...\r\n");
-            message_t *message = (message_t*) osEventMessage;
-            setbit(OUTSET, 16);
-            mpool.free(message);
-        }
-        thread_sleep_for(1);
-    }
+    setbit(DIRSET, 16);
+    Flipper.attach(&flip, 0.000001); // the address of the function to be attached (flip) and the interval (2 seconds)
+    while(true){}
 }
 
 void Strawberry()
 {
     while(true)
     {
-        serial.printf("strawberry loop entered...\r\n");
+        //serial.printf("strawberry loop entered...\r\n");
+        //nrf_pwn_enable;
     }
+}
+
+void Chocolate()
+{
+    // specify period first
+    blue.period_us(1000);      // period in us
+    blue.write(0.25f);      // 50% duty cycle, relative to period
+    //blue = 0.5f;          // shorthand for blue.write()
+    //blue.pulsewidth(2);   // alternative to blue.write, set duty cycle time in seconds
+    while (true);
 }
 
 void Producer()
 {
-    uint32_t i = 0;
+    //uint32_t i = 0;
     while(true)
     {
-        serial.printf("Producer loop entered...\r\n");
+        // serial.printf("Producer loop entered...\r\n");
         message_t *message = mpool.alloc();
-        message->mills = 3;
+        message->mills = 333;
+        message->period = 1000;
         message->count = i;
-        serial.printf("Count... %i\r\n", message->count);
+        // serial.printf("Count... %i\r\n", message->count);
         i++;
         queue.put(message);
-        thread_sleep_for(1000);
+        thread_sleep_for(1);
     }
 }
 
 // main() runs in its own thread in the OS
 int main()
 {
-    setbit(DIRSET, 16);
-    serial.printf("Threads start...\r\n");
+    //serial.printf("Threads start...\r\n");
     thread1.start(callback(Producer));
     thread2.start(callback(Vanilla));
+    thread3.start(callback(Chocolate));
+    while(true){}
 }
 
