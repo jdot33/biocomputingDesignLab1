@@ -14,7 +14,7 @@ uint32_t counter = 0;
 typedef struct {
     uint32_t mills;
     uint32_t period;
-    float CDC;
+    float CDC; //chocolate duty cycle variable 
     uint32_t count = 0;   /* A counter value               */
 } message_t;
 
@@ -22,13 +22,13 @@ MemoryPool<message_t, 9> mpool;
 Queue<message_t, 9> queue;
 
 Ticker Flipper;
-Mutex stdio_mutex;
+Semaphore qMessage(1);
 
 PwmOut blue(LED4);
 
 Thread thread1, thread2, thread3;
 
-//USBSerial serial;
+USBSerial serial;
 
 void flip(){
     if(counter <= 333){
@@ -63,28 +63,47 @@ void Strawberry()
 
 void Chocolate()
 {
-    // specify period first
+    serial.printf("chocolate loop entered...\r\n");
+    float cDuty;
     blue.period_us(1000);      // period in us
-    blue.write(0.25f);      // 50% duty cycle, relative to period
-    //blue = 0.5f;          // shorthand for blue.write()
-    //blue.pulsewidth(2);   // alternative to blue.write, set duty cycle time in seconds
-    while (true);
+    while (true){
+        qMessage.acquire();
+        osEvent event = queue.get(0);
+        if (event.status == osEventMessage) {
+            message_t* dutycycle = (message_t*) event.value.p;
+            cDuty = dutycycle->CDC;
+            mpool.free(dutycycle);
+        }
+        serial.printf("dutycycle->CDC... %i \r\n", cDuty);
+        // specify period first
+        blue.write(cDuty);      // 50% duty cycle, relative to period
+        //blue = 0.5f;          // shorthand for blue.write()
+        //blue.pulsewidth(2);   // alternative to blue.write, set duty cycle time in seconds
+        thread_sleep_for(10);
+        qMessage.release();
+    };
 }
 
 void Producer()
 {
-    //uint32_t i = 0;
+    int i = 0;
+    float Chocpercent = 0;
     while(true)
     {
-        // serial.printf("Producer loop entered...\r\n");
+        if(Chocpercent >= 1){
+            Chocpercent = 0;
+        }
+        serial.printf("Producer loop entered...\r\n");
         message_t *message = mpool.alloc();
         message->mills = 333;
         message->period = 1000;
+        message->CDC = Chocpercent;
         message->count = i;
-        // serial.printf("Count... %i\r\n", message->count);
+        serial.printf("Count... %i\r\n", message->count);
         i++;
+        Chocpercent = Chocpercent + 0.1;
         queue.put(message);
-        thread_sleep_for(1);
+        thread_sleep_for(100);
     }
 }
 
@@ -93,7 +112,7 @@ int main()
 {
     //serial.printf("Threads start...\r\n");
     thread1.start(callback(Producer));
-    thread2.start(callback(Vanilla));
+    //thread2.start(callback(Vanilla));
     thread3.start(callback(Chocolate));
     while(true){}
 }
