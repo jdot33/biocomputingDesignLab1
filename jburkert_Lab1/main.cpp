@@ -14,8 +14,7 @@ uint32_t counter = 0;
 typedef struct {
     uint32_t mills;
     uint32_t period;
-    float CDC; //chocolate duty cycle variable 
-    uint32_t count = 0;   /* A counter value               */
+    int CDC; //chocolate duty cycle variable 
 } message_t;
 
 MemoryPool<message_t, 9> mpool;
@@ -63,7 +62,6 @@ void Strawberry()
 
 void Chocolate()
 {
-    serial.printf("chocolate loop entered...\r\n");
     float cDuty;
     blue.period_us(1000);      // period in us
     while (true){
@@ -71,37 +69,94 @@ void Chocolate()
         osEvent event = queue.get(0);
         if (event.status == osEventMessage) {
             message_t* dutycycle = (message_t*) event.value.p;
-            cDuty = dutycycle->CDC;
+            if(dutycycle->CDC == 1){
+                cDuty = 1.0;
+            }
+            else if(dutycycle->CDC == 2){
+                cDuty = 0.9;
+            }
+            else if(dutycycle->CDC == 3){
+                cDuty = 0.8;
+            }
+            else if(dutycycle->CDC == 4){
+                cDuty = 0.7;
+            }
+            else if(dutycycle->CDC == 5){
+                cDuty = 0.6;
+            }
+            else if(dutycycle->CDC == 6){
+                cDuty = 0.5;
+            }
+            else if(dutycycle->CDC == 7){
+                cDuty = 0.4;
+            }
+            else if(dutycycle->CDC == 8){
+                cDuty = 0.3;
+            }
+            else if(dutycycle->CDC == 9){
+                cDuty = 0.2;
+            }
+            else if(dutycycle->CDC == 10){
+                cDuty = 0.1;
+            }
             mpool.free(dutycycle);
         }
-        serial.printf("dutycycle->CDC... %i \r\n", cDuty);
         // specify period first
         blue.write(cDuty);      // 50% duty cycle, relative to period
         //blue = 0.5f;          // shorthand for blue.write()
         //blue.pulsewidth(2);   // alternative to blue.write, set duty cycle time in seconds
         thread_sleep_for(10);
         qMessage.release();
-    };
+    }
 }
 
 void Producer()
 {
     int i = 0;
-    float Chocpercent = 0;
+    int ChocFlag = 0;
+    int ChocState = 0;
     while(true)
     {
-        if(Chocpercent >= 1){
-            Chocpercent = 0;
+        if(ChocState == 0){
+            ChocFlag = 0;
+        }
+        if(ChocState >= 10){
+            ChocFlag = 1;
+        }
+        switch(ChocFlag){
+            case 0:
+                    ChocState++;
+                    break;
+            case 1:
+                    ChocState--;
+                    break;
+            // case 3:
+            //         Block-n;
+            //         Break;
+            // case 4:
+            //         Block-n;
+            //         Break;
+            // case 5:
+            //         Block-n;
+            //         Break;
+            // case 6:
+            //         Block-n;
+            //         Break;
+            default:
+                    ChocState++;
+                    break;
+        }
+        if(i >= 100){
+            i = 0;
         }
         serial.printf("Producer loop entered...\r\n");
         message_t *message = mpool.alloc();
         message->mills = 333;
         message->period = 1000;
-        message->CDC = Chocpercent;
+        message->CDC = ChocState;
         message->count = i;
         serial.printf("Count... %i\r\n", message->count);
         i++;
-        Chocpercent = Chocpercent + 0.1;
         queue.put(message);
         thread_sleep_for(100);
     }
