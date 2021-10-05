@@ -10,15 +10,19 @@
 #define OUTCLR (uint32_t*)0x5000050C
 
 uint32_t counter = 0;
+int VDC = 333;
 
 typedef struct {
     uint32_t mills;
     uint32_t period;
+    int VanillaState; //Vanilla duty cycle
     int CDC; //chocolate duty cycle variable 
 } message_t;
 
-MemoryPool<message_t, 9> mpool;
-Queue<message_t, 9> queue;
+MemoryPool<message_t, 18> Vmpool;
+Queue<message_t, 9> Vqueue;
+Queue<message_t, 9> Cqueue;
+Queue<message_t, 9> Squeue;
 
 Ticker Flipper;
 Semaphore qMessage(1);
@@ -30,14 +34,14 @@ Thread thread1, thread2, thread3;
 USBSerial serial;
 
 void flip(){
-    if(counter <= 333){
+    if(counter <= VDC){
         setbit(OUTCLR, 16);
     }
     else{
         setbit(OUTSET, 16);
     }
 
-    if(counter == 1000){
+    if(counter == 2000){
         counter = -1;
     }
     counter++;
@@ -47,8 +51,46 @@ void flip(){
 void Vanilla()
 {
     setbit(DIRSET, 16);
-    Flipper.attach(&flip, 0.000001); // the address of the function to be attached (flip) and the interval (2 seconds)
-    while(true){}
+    Flipper.attach(&flip, 30us); // the address of the function to be attached (flip) and the interval (2 seconds)
+    while(true){
+        osEvent event = Vqueue.get(0);
+        if (event.status == osEventMessage) {
+            message_t* Vstate = (message_t*) event.value.p;
+            if(Vstate->VanillaState == 1){
+                VDC = 2000;
+            }
+            else if(Vstate->VanillaState == 2){
+                VDC = 1800;
+            }
+            else if(Vstate->VanillaState == 3){
+                VDC = 1600;
+            }
+            else if(Vstate->VanillaState == 4){
+                VDC = 1400;
+            }
+            else if(Vstate->VanillaState == 5){
+                VDC = 1200;
+            }
+            else if(Vstate->VanillaState == 6){
+                VDC = 1000;
+            }
+            else if(Vstate->VanillaState == 7){
+                VDC = 800;
+            }
+            else if(Vstate->VanillaState == 8){
+                VDC = 600;
+            }
+            else if(Vstate->VanillaState == 9){
+                VDC = 400;
+            }
+            else if(Vstate->VanillaState == 10){
+                VDC = 0;
+            }
+            Vmpool.free(Vstate);
+            
+        }
+        thread_sleep_for(10);
+    }
 }
 
 void Strawberry()
@@ -66,7 +108,7 @@ void Chocolate()
     blue.period_us(1000);      // period in us
     while (true){
         qMessage.acquire();
-        osEvent event = queue.get(0);
+        osEvent event = Cqueue.get(0);
         if (event.status == osEventMessage) {
             message_t* dutycycle = (message_t*) event.value.p;
             if(dutycycle->CDC == 1){
@@ -99,7 +141,7 @@ void Chocolate()
             else if(dutycycle->CDC == 10){
                 cDuty = 0.1;
             }
-            mpool.free(dutycycle);
+            Vmpool.free(dutycycle);
         }
         // specify period first
         blue.write(cDuty);      // 50% duty cycle, relative to period
@@ -130,18 +172,6 @@ void Producer()
             case 1:
                     ChocState--;
                     break;
-            // case 3:
-            //         Block-n;
-            //         Break;
-            // case 4:
-            //         Block-n;
-            //         Break;
-            // case 5:
-            //         Block-n;
-            //         Break;
-            // case 6:
-            //         Block-n;
-            //         Break;
             default:
                     ChocState++;
                     break;
@@ -150,14 +180,16 @@ void Producer()
             i = 0;
         }
         serial.printf("Producer loop entered...\r\n");
-        message_t *message = mpool.alloc();
-        message->mills = 333;
-        message->period = 1000;
+        message_t *message = Vmpool.alloc();
+        //message_t *message = Cmpool.alloc();
+        //message_t *message = Smpool.alloc();
         message->CDC = ChocState;
-        message->count = i;
-        serial.printf("Count... %i\r\n", message->count);
+        message->VanillaState = ChocState;
+        serial.printf("Count... %i\r\n", i);
         i++;
-        queue.put(message);
+        Vqueue.put(message);
+        Cqueue.put(message);
+        //Squeue.put(message);
         thread_sleep_for(100);
     }
 }
@@ -167,7 +199,7 @@ int main()
 {
     //serial.printf("Threads start...\r\n");
     thread1.start(callback(Producer));
-    //thread2.start(callback(Vanilla));
+    thread2.start(callback(Vanilla));
     thread3.start(callback(Chocolate));
     while(true){}
 }
