@@ -1,3 +1,6 @@
+// cd documents/github/biocomputingdesignlab1/jburkert_Lab1
+//arduino-upload COM9 jburkert_Lab1.bin
+
 #include "mbed.h"
 #include "binaryutils.hpp"
 #include "USBSerial.h"
@@ -9,7 +12,7 @@
 #define OUTSET (uint32_t*)0x50000508
 #define OUTCLR (uint32_t*)0x5000050C
 
-uint32_t counter = 0;
+uint32_t pass = 0;
 int VDC = 333;
 
 typedef struct {
@@ -34,17 +37,17 @@ Thread thread1, thread2, thread3;
 USBSerial serial;
 
 void flip(){
-    if(counter <= VDC){
+    if(pass <= VDC){
         setbit(OUTCLR, 16);
     }
     else{
         setbit(OUTSET, 16);
     }
 
-    if(counter == 2000){
-        counter = -1;
+    if(pass == 1000){
+        pass = -1;
     }
-    counter++;
+    pass++;
 }
 
 
@@ -57,31 +60,31 @@ void Vanilla()
         if (event.status == osEventMessage) {
             message_t* Vstate = (message_t*) event.value.p;
             if(Vstate->VanillaState == 1){
-                VDC = 2000;
-            }
-            else if(Vstate->VanillaState == 2){
-                VDC = 1800;
-            }
-            else if(Vstate->VanillaState == 3){
-                VDC = 1600;
-            }
-            else if(Vstate->VanillaState == 4){
-                VDC = 1400;
-            }
-            else if(Vstate->VanillaState == 5){
-                VDC = 1200;
-            }
-            else if(Vstate->VanillaState == 6){
                 VDC = 1000;
             }
-            else if(Vstate->VanillaState == 7){
+            else if(Vstate->VanillaState == 2){
+                VDC = 900;
+            }
+            else if(Vstate->VanillaState == 3){
                 VDC = 800;
             }
-            else if(Vstate->VanillaState == 8){
+            else if(Vstate->VanillaState == 4){
+                VDC = 700;
+            }
+            else if(Vstate->VanillaState == 5){
                 VDC = 600;
             }
-            else if(Vstate->VanillaState == 9){
+            else if(Vstate->VanillaState == 6){
+                VDC = 500;
+            }
+            else if(Vstate->VanillaState == 7){
                 VDC = 400;
+            }
+            else if(Vstate->VanillaState == 8){
+                VDC = 300;
+            }
+            else if(Vstate->VanillaState == 9){
+                VDC = 200;
             }
             else if(Vstate->VanillaState == 10){
                 VDC = 0;
@@ -97,7 +100,8 @@ void Strawberry()
 {
     while(true)
     {
-        //serial.printf("strawberry loop entered...\r\n");
+        serial.printf("strawberry loop entered...\r\n");
+
         //nrf_pwn_enable;
     }
 }
@@ -105,41 +109,41 @@ void Strawberry()
 void Chocolate()
 {
     float cDuty;
-    blue.period_us(1000);      // period in us
+    blue.period_us(500);      // period in us
     while (true){
         qMessage.acquire();
         osEvent event = Cqueue.get(0);
         if (event.status == osEventMessage) {
             message_t* dutycycle = (message_t*) event.value.p;
             if(dutycycle->CDC == 1){
-                cDuty = 1.0;
-            }
-            else if(dutycycle->CDC == 2){
-                cDuty = 0.9;
-            }
-            else if(dutycycle->CDC == 3){
                 cDuty = 0.8;
             }
-            else if(dutycycle->CDC == 4){
-                cDuty = 0.7;
-            }
-            else if(dutycycle->CDC == 5){
+            else if(dutycycle->CDC == 2){
                 cDuty = 0.6;
             }
+            else if(dutycycle->CDC == 3){
+                cDuty = 0.4;
+            }
+            else if(dutycycle->CDC == 4){
+                cDuty = 0.2;
+            }
+            else if(dutycycle->CDC == 5){
+                cDuty = 0;
+            }
             else if(dutycycle->CDC == 6){
-                cDuty = 0.5;
+                cDuty = 0.2;
             }
             else if(dutycycle->CDC == 7){
                 cDuty = 0.4;
             }
             else if(dutycycle->CDC == 8){
-                cDuty = 0.3;
+                cDuty = 0.6;
             }
             else if(dutycycle->CDC == 9){
-                cDuty = 0.2;
+                cDuty = 0.8;
             }
             else if(dutycycle->CDC == 10){
-                cDuty = 0.1;
+                cDuty = 1.0;
             }
             Vmpool.free(dutycycle);
         }

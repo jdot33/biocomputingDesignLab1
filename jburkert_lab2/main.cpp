@@ -1,3 +1,4 @@
+// cd documents/github/biocomputingdesignlab1/jburkert_lab2
 //arduino-upload COM9 jburkert_lab2.bin
 #include "mbed.h"
 #include "binaryutils.hpp"
